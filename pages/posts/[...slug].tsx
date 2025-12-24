@@ -4,7 +4,7 @@ import { MDXRemote } from 'next-mdx-remote';
 import BlogLayout from '@core/layout/BlogPost';
 import getOgImage from 'lib/generate-opengraph-images';
 import { getTweets } from 'lib/tweets';
-import { getFileBySlug, getFiles } from 'lib/mdx';
+import { getFileBySlug, getFiles, getBooks } from 'lib/mdx';
 import MDXComponents from '@core/components/MDX/MDXComponents';
 import Tweet from '@core/components/Tweet';
 import { FrontMatterPost } from 'types/post';
@@ -43,20 +43,46 @@ export default Blog;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getFiles();
+  const completedBooks = await getBooks('completed');
+  const readingBooks = await getBooks('reading');
 
   return {
-    paths: posts.map((p) => ({
-      params: {
-        slug: p.replace(/\.mdx/, ''),
-      },
-    })),
+    paths: [
+      ...posts.map((p) => ({
+        params: {
+          slug: [p.replace(/\.mdx/, '')],
+        },
+      })),
+      ...completedBooks.map((book) => ({
+        params: {
+          slug: ['completed', book.slug],
+        },
+      })),
+      ...readingBooks.map((book) => ({
+        params: {
+          slug: ['reading', book.slug],
+        },
+      })),
+    ],
     fallback: false, // changed from true to false for SSG export
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
-    const post = await getFileBySlug(params!.slug as string);
+    const slugArray = params!.slug as string[];
+    let slug: string;
+    let type: string | undefined;
+    if (slugArray.length === 1) {
+      slug = slugArray[0];
+      type = undefined;
+    } else if (slugArray.length === 2) {
+      type = slugArray[0];
+      slug = slugArray[1];
+    } else {
+      return { notFound: true };
+    }
+    const post = await getFileBySlug(slug, type);
 
     /**
      * Get tweets from API

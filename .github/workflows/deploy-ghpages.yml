@@ -52,6 +52,7 @@ jobs:
           NEXT_PUBLIC_ENABLE_AI_SEARCH: 'false'
         run: pnpm build
 
+
       - name: Add .nojekyll
         run: touch out/.nojekyll
 

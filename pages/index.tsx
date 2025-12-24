@@ -11,24 +11,21 @@ import {
   Text,
   VisuallyHidden,
   H1,
-  // H2,
+  H2,
   // H3,
 } from '@maximeheckel/design-system';
 // import { format } from 'date-fns';
 import { motion } from 'framer-motion';
-// import dynamic from 'next/dynamic';
-// import Link from 'next/link';
+import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@core/layout';
-import { getAllFilesFrontMatter } from 'lib/mdx';
+import { getAllFilesFrontMatter, getBooks } from 'lib/mdx';
 // import { Post } from 'types/post';
 import React from 'react';
 import { templateColumnsMedium } from 'styles/grid';
+import { Book } from 'types/post';
 
 // const NewsletterForm = dynamic(() => import('@core/components/NewsletterForm'));
-
-// interface Props {
-//   posts: Post[];
-// }
 
 const WavingHand = () => (
   <motion.div
@@ -53,6 +50,11 @@ const WavingHand = () => (
   </motion.div>
 );
 
+interface Props {
+  completedBooks: Book[];
+  readingBooks: Book[];
+}
+
 // let year = 0;
 
 // const cardVariants = {
@@ -74,7 +76,7 @@ const WavingHand = () => (
 //   },
 // };
 
-const IndexPage = () => {
+const IndexPage = ({ completedBooks, readingBooks }: Props) => {
   // const { posts } = props;
 
   return (
@@ -106,19 +108,17 @@ const IndexPage = () => {
                 marginBottom: 'var(--space-4)',
               }}
             >
-              <a
-                href="/posts/resume/"
-                style={{ textDecoration: 'none' }}
-                tabIndex={-1}
-              >
+              <Link href="/posts/resume/">
                 <Button
                   variant="secondary"
                   endIcon={<Icon.External size="4" />}
+                  style={{ textDecoration: 'none' }}
+                  tabIndex={-1}
                 >
                   My resume
                 </Button>
                 <VisuallyHidden as="p">Link to my resume</VisuallyHidden>
-              </a>
+              </Link>
               <a
                 href="https://twitter.com/rashidtvmr"
                 style={{ textDecoration: 'none' }}
@@ -136,7 +136,38 @@ const IndexPage = () => {
           </Flex>
         </Grid.Item>
         <Grid.Item as="section" col={2}>
-          <div style={{ height: '200px' }}></div>
+          <Flex direction="column" gap="4">
+            <H2>Currently Reading</H2>
+            <Flex gap="4" wrap="wrap">
+              {readingBooks.map((book) => (
+                <Link key={book.slug} href={`/posts/reading/${book.slug}`}>
+                  <Image
+                    src={book.cover}
+                    alt={book.title}
+                    width={150}
+                    height={200}
+                  />
+                </Link>
+              ))}
+            </Flex>
+          </Flex>
+        </Grid.Item>
+        <Grid.Item as="section" col={2}>
+          <Flex direction="column" gap="4">
+            <H2>Completed Books</H2>
+            <Flex gap="4" wrap="wrap">
+              {completedBooks.map((book) => (
+                <Link key={book.slug} href={`/posts/completed/${book.slug}`}>
+                  <Image
+                    src={book.cover}
+                    alt={book.title}
+                    width={150}
+                    height={200}
+                  />
+                </Link>
+              ))}
+            </Flex>
+          </Flex>
         </Grid.Item>
         {/* <Grid.Item as="section" col={2}>
           <Flex alignItems="start" direction="column" gap="5">
@@ -151,8 +182,10 @@ const IndexPage = () => {
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter();
+  const completedBooks = await getBooks('completed');
+  const readingBooks = await getBooks('reading');
 
-  return { props: { posts } };
+  return { props: { posts, completedBooks, readingBooks } };
 }
 
 // const Glow = styled(motion.div, {

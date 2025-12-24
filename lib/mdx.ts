@@ -3,7 +3,7 @@ import matter from 'gray-matter';
 import path from 'path';
 import readingTime from 'reading-time';
 import { serialize } from 'next-mdx-remote/serialize';
-import { FrontMatterPost, Post } from 'types/post';
+import { FrontMatterPost, Post, Book } from 'types/post';
 import { remarkSectionize } from './remark-sectionize-fork';
 import { remarkFigure } from './remark-figure';
 import { remarkMeta } from './remark-meta';
@@ -11,17 +11,22 @@ import { remarkMeta } from './remark-meta';
 const root = process.cwd();
 
 export const getFiles = async () => {
-  return fs.readdirSync(path.join(root, 'content'));
+  return fs
+    .readdirSync(path.join(root, 'content'))
+    .filter((file) => file.endsWith('.mdx'));
 };
 
 // Regex to find all the custom static tweets in a MDX file
 const TWEET_RE = /<StaticTweet\sid="[0-9]+"\s\/>/g;
 
-export const getFileBySlug = async (slug: string): Promise<FrontMatterPost> => {
-  const source = fs.readFileSync(
-    path.join(root, 'content', `${slug}.mdx`),
-    'utf8'
-  );
+export const getFileBySlug = async (
+  slug: string,
+  type?: string
+): Promise<FrontMatterPost> => {
+  const filePath = type
+    ? path.join(root, 'content', type, `${slug}.mdx`)
+    : path.join(root, 'content', `${slug}.mdx`);
+  const source = fs.readFileSync(filePath, 'utf8');
 
   const parsedFile = matter(source);
 
@@ -79,7 +84,9 @@ export const getFileBySlug = async (slug: string): Promise<FrontMatterPost> => {
 };
 
 export const getAllFilesFrontMatter = async (): Promise<Array<Post>> => {
-  const files = fs.readdirSync(path.join(root, 'content'));
+  const files = fs
+    .readdirSync(path.join(root, 'content'))
+    .filter((file) => file.endsWith('.mdx'));
 
   const posts = files
     .map((postSlug: string) => {
@@ -94,4 +101,21 @@ export const getAllFilesFrontMatter = async (): Promise<Array<Post>> => {
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
 
   return posts;
+};
+
+export const getBooks = async (
+  type: 'completed' | 'reading'
+): Promise<Book[]> => {
+  const folder = path.join(root, 'content', type);
+  if (!fs.existsSync(folder)) return [];
+  const files = fs.readdirSync(folder);
+  const books = files
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => {
+      const source = fs.readFileSync(path.join(folder, file), 'utf8');
+      const parsed = matter(source);
+      return parsed.data as Book;
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return books;
 };

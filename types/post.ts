@@ -16,6 +16,15 @@ export type Post = {
   title: string;
 };
 
+export type Book = {
+  title: string;
+  slug: string;
+  cover: string;
+  date: string;
+  subtitle?: string;
+  keywords?: string[];
+};
+
 export type FrontMatterPost = {
   frontMatter: Post & {
     readingTime: ReadingTime;

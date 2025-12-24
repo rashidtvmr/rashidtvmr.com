@@ -13,7 +13,7 @@ const matter = require('gray-matter');
   function getPosts() {
     const files = fs
       .readdirSync(path.join(root, 'content'))
-      .filter((name) => name !== 'img');
+      .filter((name) => name.endsWith('.mdx'));
 
     const posts = files.reduce((allPosts, postSlug) => {
       const source = fs.readFileSync(

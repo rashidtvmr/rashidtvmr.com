@@ -22,6 +22,11 @@ module.exports = withBundleAnalyzer({
         hostname: 't.co',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        pathname: '**',
+      },
     ],
   },
   webpack(config, { isServer, buildId }) {
