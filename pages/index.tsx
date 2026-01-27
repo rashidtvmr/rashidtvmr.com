@@ -86,7 +86,7 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
         <Grid.Item col={2}>
           <Flex alignItems="start" direction="column" gap="5">
             <H1>
-              Hi <WavingHand /> I'm Rashid, and this is my blog.{' '}
+              Hi <WavingHand /> I'm Rashid, and this is my portfolio site.{' '}
               <Text
                 css={{
                   lineHeight: 'unset',
@@ -99,6 +99,10 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
                 Here, I share my experience as a frontend engineer and
                 everything I'm learning about JavaScript, animation, React,
                 Framer Motion, and more.
+                <br />
+                Currently I am writing about what I learn in recently read book.
+                Click any one of the book cover (in completed section) below to
+                read about it.
               </Text>
             </H1>
             <Flex
