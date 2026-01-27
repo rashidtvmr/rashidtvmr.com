@@ -20,12 +20,14 @@ const Seo = ({ title, desc, image, path, date, updated }: Props) => {
     url,
     author,
     twitter,
+    keywords,
+    authorAliases,
   } = siteConfig;
 
   const seo = {
     description: desc || configDescription,
     image: image ? `${url}${image}` : configImage,
-    title: `${title} - ${configTitle}` || configTitle,
+    title: title ? `${title} - ${configTitle}` : configTitle,
     url: `${url}${path || ''}`,
     date: date,
     updated: updated || date,
@@ -51,17 +53,29 @@ const Seo = ({ title, desc, image, path, date, updated }: Props) => {
           article: {
             publishedTime: formattedDate,
             modifiedTime: formattedUpdatedDate,
+            authors: [author, ...authorAliases],
           },
           url: seo.url,
           title: seo.title,
           description: seo.description,
           images: [featuredImage],
+          site_name: configTitle,
         }}
         twitter={{
           handle: twitter,
           site: twitter,
           cardType: 'summary_large_image',
         }}
+        additionalMetaTags={[
+          {
+            name: 'keywords',
+            content: keywords.join(', '),
+          },
+          {
+            name: 'author',
+            content: `${author} (${authorAliases.join(', ')})`,
+          },
+        ]}
       />
       <Head>
         <meta name="twitter:image" content={featuredImage.url} />
@@ -69,10 +83,15 @@ const Seo = ({ title, desc, image, path, date, updated }: Props) => {
         <meta name="twitter:description" content={seo.description} />
         <meta property="twitter:domain" content={url} />
         <meta name="googlebot" content="index,follow" />
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+        <link rel="canonical" href={seo.url} />
       </Head>
       <ArticleJsonLd
         authorName={author}
-        dateModified={formattedDate}
+        dateModified={formattedUpdatedDate}
         datePublished={formattedDate}
         description={seo.description}
         images={[seo.image]}

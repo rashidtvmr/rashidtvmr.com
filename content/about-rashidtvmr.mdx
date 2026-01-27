@@ -1,0 +1,288 @@
+---
+title: 'About Rashidtvmr | Mohammed Rashid - Frontend Engineer'
+
+slug: 'about-rashidtvmr'
+date: '2026-01-27T00:00:00.000Z'
+updated: '2026-01-27T00:00:00.000Z'
+subtitle: 'Learn about Rashid (rashidtvmr, rashidtv, tvrashid, raashid) - a senior frontend engineer specializing in React, TypeScript, and modern web technologies.'
+keywords: ['rashidtvmr', 'rashidtv', 'rashid', 'tvrashid', 'raashid', 'rashid pbt', 'Mohammed Rashid', 'frontend engineer', 'React developer', 'TypeScript expert']
+---
+
+# About Rashidtvmr (Rashid)
+
+Hi! I'm **Mohammed Rashid**, professionally known as **rashidtvmr** (also **rashidtv**, **tvrashid**, **raashid**, and **rashid pbt** across different platforms). Welcome to my official blog at **raashid.me** — the single authoritative source for my work, writing, and frontend engineering expertise.
+
+## Who Is Rashidtvmr?
+
+I'm a **senior frontend engineer** based in **Chennai, India**, with deep expertise in building high-performance, user-centric web applications. My work focuses on:
+
+- **React & Next.js** - Modern component architecture and server-side rendering
+- **TypeScript** - Type-safe application development
+- **Frontend Animation** - Advanced motion design with Framer Motion and GSAP
+- **Web Performance** - Core Web Vitals optimization and performance engineering
+- **Modern JavaScript** - ES6+, async patterns, and functional programming
+
+## Why Multiple Names?
+
+You might find me under several variations online:
+
+- **rashidtvmr** - My primary brand and handle (most common)
+- **rashidtv** - Shortened version used on some platforms
+- **tvrashid** - Alternative ordering of my handle
+- **raashid** - The domain for this official site (raashid.me)
+- **rashid pbt** - Professional variant
+- **Mohammed Rashid** - My full legal name
+
+**All of these refer to the same person — me> lib/seo.ts << 'EOF'
+import siteConfig from '../config/site';
+
+export const generatePersonSchema = () => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: siteConfig.author,
+    alternateName: siteConfig.authorAliases,
+    url: siteConfig.siteUrl,
+    image: siteConfig.image,
+    sameAs: [
+      `https://twitter.com/${siteConfig.twitter.replace('@', '')}`,
+      'https://github.com/rashidtvmr',
+      'https://linkedin.com/in/rashidtvmr',
+    ],
+    jobTitle: 'Senior Frontend Engineer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Independent',
+    },
+    knowsAbout: [
+      'React',
+      'TypeScript',
+      'JavaScript',
+      'Frontend Engineering',
+      'Web Performance',
+      'Framer Motion',
+      'Next.js',
+    ],
+    description: siteConfig.twitterDesc,
+  };
+};
+
+export const generateWebsiteSchema = () => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.title,
+    alternateName: [
+      'Rashidtvmr Blog',
+      'RashidTV Blog',
+      'Rashid Blog',
+      'TVRashid Blog',
+      'Raashid Blog',
+    ],
+    url: siteConfig.siteUrl,
+    description: siteConfig.description,
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author,
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteConfig.siteUrl}posts?search={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+};
+
+export const generateBlogSchema = () => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    url: siteConfig.siteUrl,
+    name: siteConfig.title,
+    description: siteConfig.description,
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author,
+      alternateName: siteConfig.authorAliases,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: siteConfig.author,
+    },
+  };
+};
+
+export const generateBlogPostSchema = (post: {
+  title: string;
+  subtitle: string;
+  date: string;
+  updated?: string;
+  slug: string;
+  keywords?: string[];
+}) => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.subtitle,
+    datePublished: post.date,
+    dateModified: post.updated || post.date,
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author,
+      alternateName: siteConfig.authorAliases,
+      url: siteConfig.siteUrl,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: siteConfig.author,
+    },
+    url: `${siteConfig.siteUrl}posts/${post.slug}/`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteConfig.siteUrl}posts/${post.slug}/`,
+    },
+    keywords: post.keywords?.join(', '),
+    image: siteConfig.image,
+  };
+};
+
+export const generateBreadcrumbSchema = (items: { name: string; url: string }[]) => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+};
+
+export const generateCanonicalUrl = (path: string) => {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${siteConfig.url}${cleanPath}`;
+};
+
+export const generateMetaTags = (options: {
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  type?: string;
+  keywords?: string[];
+}) => {
+  const title = options.title || siteConfig.title;
+  const description = options.description || siteConfig.description;
+  const image = options.image || siteConfig.image;
+  const url = options.url || siteConfig.siteUrl;
+  const type = options.type || 'website';
+  
+  return {
+    title,
+    description,
+    keywords: [...siteConfig.keywords, ...(options.keywords || [])].join(', '),
+    canonical: url,
+    openGraph: {
+      type,
+      url,
+      title,
+      description,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      siteName: siteConfig.title,
+    },
+    twitter: {
+      handle: siteConfig.twitter,
+      site: siteConfig.twitter,
+      cardType: 'summary_large_image',
+      title,
+      description,
+      image,
+    },
+  };
+};
+EOF* This blog at **https://raashid.me/** is my official digital home and the canonical source for all my content and professional work.
+
+## What I Write About
+
+On this blog, I share:
+
+### Technical Deep Dives
+- React patterns and best practices
+- TypeScript advanced techniques
+- Next.js optimization strategies
+- Frontend architecture decisions
+
+### Animation & Motion Design
+- Framer Motion tutorials
+- GSAP animation techniques
+- CSS animation performance
+- Creating delightful user experiences
+
+### Web Performance
+- Core Web Vitals optimization
+- Performance monitoring
+- Loading strategies
+- Bundle size optimization
+
+### Career & Learning
+- Frontend engineering career paths
+- Learning resources and recommendations
+- Industry insights
+- Personal project showcases
+
+## My Technical Philosophy
+
+I believe in:
+
+1. **Performance First** - Every millisecond counts in user experience
+2. **Type Safety** - TypeScript prevents bugs before they happen
+3. **Accessible Design** - The web should work for everyone
+4. **Continuous Learning** - Technology evolves, so must we
+5. **Sharing Knowledge** - Writing solidifies understanding and helps others
+
+## Connect With Me
+
+- **Twitter/X**: [@rashidtvmr](https://twitter.com/rashidtvmr)
+- **GitHub**: [rashidtvmr](https://github.com/rashidtvmr)
+- **LinkedIn**: [rashidtvmr](https://linkedin.com/in/rashidtvmr)
+- **Email**: Available through this site's contact form
+
+## Official Website
+
+**Important**: This website (**https://raashid.me/**) is my only official blog and portfolio. Any other sites claiming to be mine should be verified directly with me. All my professional writing, projects, and announcements are published here first.
+
+## Frequently Asked Questions
+
+### Why is your domain "raashid.me" but your handle "rashidtvmr"?
+
+The domain **raashid.me** is a clean, personal brand representation, while **rashidtvmr** is my handle across social platforms. Both represent me and my work.
+
+### Are rashidtvmr, rashidtv, and tvrashid the same person?
+
+Yes! All these variations refer to me, **Mohammed Rashid**. I use different handles across platforms, but this is my unified brand identity.
+
+### Where else can I find your content?
+
+This blog is my primary content hub. I also share shorter updates on Twitter (@rashidtvmr) and code on GitHub (rashidtvmr), but all long-form content lives here.
+
+### Do you take freelance work?
+
+Please reach out through my contact channels for any collaboration or freelance inquiries.
+
+---
+
+*Last updated: January 2026*
+
+Thank you for visiting! Explore my [blog posts](/posts/) to dive into frontend engineering, React, animations, and web performance optimization.

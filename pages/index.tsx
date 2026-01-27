@@ -24,6 +24,7 @@ import { getAllFilesFrontMatter, getBooks } from 'lib/mdx';
 import React from 'react';
 import { templateColumnsMedium } from 'styles/grid';
 import { Book } from 'types/post';
+// import siteConfig from '../config/site';
 
 // const NewsletterForm = dynamic(() => import('@core/components/NewsletterForm'));
 

@@ -1,12 +1,38 @@
 import { getCssText } from '@maximeheckel/design-system';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import Script from 'next/script';
+import {
+  generatePersonSchema,
+  generateWebsiteSchema,
+  generateBlogSchema,
+} from '../lib/seo';
 
 class MyDocument extends Document {
   render() {
+    const personSchema = generatePersonSchema();
+    const websiteSchema = generateWebsiteSchema();
+    const blogSchema = generateBlogSchema();
+
     return (
       <Html lang="en" className="maximeheckel-light">
         <Head>
+          {/* Schema.org structured data */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
+          />
+
+          {/* Canonical URL - enforced globally */}
+          <link rel="canonical" href="https://raashid.me/" />
+
           <link
             rel="preload"
             href="/fonts/inter-var-latin.woff2"

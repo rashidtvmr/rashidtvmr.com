@@ -9,9 +9,17 @@
             <link>https://raashid.me</link>
         </image>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Wed, 07 Jan 2026 07:44:59 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 27 Jan 2026 08:42:15 GMT</lastBuildDate>
         <atom:link href="https://raashid.me/rss.xml" rel="self" type="application/rss+xml"/>
         <language><![CDATA[en]]></language>
+        <item>
+            <title><![CDATA[About Rashidtvmr | Mohammed Rashid - Frontend Engineer]]></title>
+            <description><![CDATA[Learn about Rashid (rashidtvmr, rashidtv, tvrashid, raashid) - a senior frontend engineer specializing in React, TypeScript, and modern web technologies.]]></description>
+            <link>https://raashid.me/posts/about-rashidtvmr</link>
+            <guid isPermaLink="false">https://raashid.me/posts/about-rashidtvmr</guid>
+            <dc:creator><![CDATA[Rashidtvmr]]></dc:creator>
+            <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
+        </item>
         <item>
             <title><![CDATA[My Resume]]></title>
             <description><![CDATA[My resume.]]></description>

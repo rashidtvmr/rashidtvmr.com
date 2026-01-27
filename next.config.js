@@ -45,11 +45,45 @@ module.exports = withBundleAnalyzer({
 
     return config;
   },
+  async redirects() {
+    return [
+      // Enforce HTTPS and canonical domain
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.raashid.me',
+          },
+        ],
+        destination: 'https://raashid.me/:path*',
+        permanent: true,
+      },
+      // Redirect common brand domain typos/variants to canonical
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: '(?:rashidtvmr|rashidtv|tvrashid|rashid-pbt)\\.(?:com|net|org|me)',
+          },
+        ],
+        destination: 'https://raashid.me/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
         source: '/(.*)',
-        headers: securityHeaders,
+        headers: [
+          ...securityHeaders,
+          {
+            key: 'Link',
+            value: '<https://raashid.me>; rel="canonical"',
+          },
+        ],
       },
       {
         source: '/fonts/inter-var-latin.woff2',
