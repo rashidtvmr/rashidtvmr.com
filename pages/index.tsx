@@ -1,10 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import {
-  // styled,
-  // Anchor,
-  // Box,
   Button,
-  // Card,
   Flex,
   Grid,
   Icon,
@@ -12,21 +8,15 @@ import {
   VisuallyHidden,
   H1,
   H2,
-  // H3,
 } from '@maximeheckel/design-system';
-// import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import Layout from '@core/layout';
 import { getAllFilesFrontMatter, getBooks } from 'lib/mdx';
-// import { Post } from 'types/post';
 import React from 'react';
 import { templateColumnsMedium } from 'styles/grid';
 import { Book } from 'types/post';
-// import siteConfig from '../config/site';
-
-// const NewsletterForm = dynamic(() => import('@core/components/NewsletterForm'));
 
 const WavingHand = () => (
   <motion.div
@@ -56,27 +46,6 @@ interface Props {
   readingBooks: Book[];
 }
 
-// let year = 0;
-
-// const cardVariants = {
-//   hover: {
-//     scale: 1.05,
-//   },
-//   initial: {
-//     scale: 1,
-//   },
-// };
-
-// const glowVariants = {
-//   hover: {
-//     opacity: 0.8,
-//   },
-//   initial: {
-//     scale: 1.05,
-//     opacity: 0,
-//   },
-// };
-
 const IndexPage = ({ completedBooks, readingBooks }: Props) => {
   // const { posts } = props;
 
@@ -86,7 +55,8 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
         <Grid.Item col={2}>
           <Flex alignItems="start" direction="column" gap="5">
             <H1>
-              Hi <WavingHand /> I'm Rashid, and this is my portfolio site.{' '}
+              Hi <WavingHand /> I’m Rashid, a frontend engineer focused on
+              building thoughtful, performant web experiences.{' '}
               <Text
                 css={{
                   lineHeight: 'unset',
@@ -96,15 +66,15 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
                 size="7"
                 weight="4"
               >
-                Here, I share my experience as a frontend engineer and
-                everything I'm learning about JavaScript, animation, React,
-                Framer Motion, and more.
-                <br />
-                Currently I am writing about what I learn in recently read book.
-                Click any one of the book cover (in completed section) below to
-                read about it.
+                Here, I share my experience as a frontend engineer along with
+                insights from what I’m learning in JavaScript, animation, React,
+                Framer Motion, and modern frontend development. I also write
+                about key takeaways from books I’ve recently read. Click on any
+                book cover in the <strong>Completed</strong> section below to
+                explore articles inspired by that book.
               </Text>
             </H1>
+
             <Flex
               gap={4}
               css={{
