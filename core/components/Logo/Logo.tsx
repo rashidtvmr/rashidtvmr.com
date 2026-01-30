@@ -6,13 +6,15 @@ const transitionLogo = css({
   willChange: 'stroke, fill',
 });
 
-const Logo = ({ alt, size, stroke }: LogoProps) => (
+const Logo = ({ alt }: LogoProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="40"
     height="40"
     viewBox="0 0 400 400"
     fill="none"
+    className={transitionLogo()}
+    aria-label={alt}
   >
     <g clip-path="url(#clip0_1_2)">
       <rect width="400" height="400" rx="100" fill="#D7D7D7" />

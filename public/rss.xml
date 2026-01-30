@@ -9,7 +9,7 @@
             <link>https://raashid.me</link>
         </image>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 27 Jan 2026 08:42:15 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 30 Jan 2026 06:41:01 GMT</lastBuildDate>
         <atom:link href="https://raashid.me/rss.xml" rel="self" type="application/rss+xml"/>
         <language><![CDATA[en]]></language>
         <item>
@@ -26,7 +26,7 @@
             <link>https://raashid.me/posts/resume</link>
             <guid isPermaLink="false">https://raashid.me/posts/resume</guid>
             <dc:creator><![CDATA[Rashidtvmr]]></dc:creator>
-            <pubDate>Wed, 07 Aug 2024 18:00:00 GMT</pubDate>
+            <pubDate>Tue, 27 Aug 2024 18:00:00 GMT</pubDate>
         </item>
     </channel>
 </rss>
