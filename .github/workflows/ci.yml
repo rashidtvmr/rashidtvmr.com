@@ -21,135 +21,96 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
       - name: Cache Cypress binary
         id: cache-cypress-binary
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/Cypress
           key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             cypress-binary-
       - name: Install Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true' || steps.cache-cypress-binary.outputs.cache-hit != 'true'
-        run: |
-          pnpm install
+        run: pnpm install --frozen-lockfile
   lint-format:
     runs-on: ubuntu-latest
     needs: install-cache
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Run lint
-        run: |
-          pnpm lint
+        run: pnpm lint
       - name: Run prettier
-        run: |
-          pnpm format
+        run: pnpm format
   type-check:
     runs-on: ubuntu-latest
     needs: install-cache
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Check types
-        run: |
-          pnpm type-check
+        run: pnpm type-check
   unit-test:
     runs-on: ubuntu-latest
     needs: install-cache
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Run test
-        run: |
-          pnpm test
+        run: pnpm test
   build:
     runs-on: ubuntu-latest
     needs: [lint-format, type-check, unit-test]
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Run build
-        run: |
-          pnpm build
+        run: pnpm build
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: .next
@@ -159,32 +120,26 @@ jobs:
     needs: build
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Restore Cypress binary
         id: cache-cypress-binary
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/Cypress
           key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             cypress-binary-
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-output
           path: .next
@@ -195,17 +150,17 @@ jobs:
           browser: chrome
           install: false
       - name: Upload Screenshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-chrome
           path: cypress/screenshots
           if-no-files-found: ignore
       - name: Upload Videos
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-videos
+          name: cypress-videos-chrome
           path: cypress/videos
           if-no-files-found: ignore
   e2e-tests-firefox:
@@ -213,32 +168,26 @@ jobs:
     needs: build
     steps:
       - name: Checkout Commit
-        uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.17.0'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Restore pnpm dependencies
-        uses: actions/cache@v3
-        id: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
       - name: Restore Cypress binary
         id: cache-cypress-binary
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/Cypress
           key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             cypress-binary-
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-output
           path: .next
@@ -249,16 +198,16 @@ jobs:
           browser: firefox
           install: false
       - name: Upload Screenshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-firefox
           path: cypress/screenshots
           if-no-files-found: ignore
       - name: Upload Videos
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-videos
+          name: cypress-videos-firefox
           path: cypress/videos
           if-no-files-found: ignore

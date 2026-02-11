@@ -70,3 +70,6 @@ yarn-error.log
 
 cypress/screenshots
 cypress/videos
+
+# Static export output
+out/
