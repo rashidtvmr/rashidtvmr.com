@@ -1,7 +1,12 @@
 'use client';
 
 import { Flex, Text } from '@maximeheckel/design-system';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import {
+  motion,
+  AnimatePresence,
+  PanInfo,
+  useReducedMotion,
+} from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
@@ -15,12 +20,14 @@ const BOOK_H = 215;
 interface BookCarouselProps {
   books: Book[];
   type: 'reading' | 'completed';
+  id: string;
 }
 
-const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
+const BookCarousel: React.FC<BookCarouselProps> = ({ books, type, id }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const count = books.length;
   const dragRef = useRef(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const goNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % count);
@@ -30,12 +37,9 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
     setActiveIndex((prev) => (prev - 1 + count) % count);
   }, [count]);
 
-  /* Keyboard navigation */
-  const containerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = (e: KeyboardEvent) => {
+  /* Arrow key handler — works via event bubbling from any focused child */
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         goNext();
@@ -44,22 +48,20 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
         e.preventDefault();
         goPrev();
       }
-    };
-    el.addEventListener('keydown', handler);
-    return () => el.removeEventListener('keydown', handler);
-  }, [goNext, goPrev]);
+    },
+    [goNext, goPrev]
+  );
 
   /* Mouse wheel navigation (shift+scroll or horizontal scroll) */
+  const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     let wheelTimeout: ReturnType<typeof setTimeout> | null = null;
     const handleWheel = (e: WheelEvent) => {
-      // Use deltaX for horizontal scroll, or deltaY when shift is held
       const delta = e.shiftKey ? e.deltaY : e.deltaX;
       if (delta === 0) return;
       e.preventDefault();
-      // Debounce to avoid rapid-fire navigation
       if (wheelTimeout) return;
       if (delta > 0) {
         goNext();
@@ -82,7 +84,6 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
     (_: any, info: PanInfo) => {
       const swipe = info.offset.x;
       const velocity = Math.abs(info.velocity.x);
-      // Lower threshold if velocity is high (quick flick)
       const threshold = velocity > 300 ? 20 : 50;
       if (swipe < -threshold) {
         goNext();
@@ -93,14 +94,8 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
     [goNext, goPrev]
   );
 
-  /**
-   * For each book, compute its shortest-path offset from activeIndex.
-   * This allows wrapping (circular) and keeps each element with a
-   * STABLE key so framer-motion animates position instead of remounting.
-   */
   const getOffset = (i: number) => {
     let offset = i - activeIndex;
-    // Wrap to shortest path around the circle
     if (offset > count / 2) offset -= count;
     if (offset < -count / 2) offset += count;
     return offset;
@@ -108,20 +103,59 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
 
   const VISIBLE_RANGE = 3;
 
+  const springTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : {
+        type: 'spring' as const,
+        stiffness: 280,
+        damping: 28,
+        mass: 0.9,
+        restDelta: 0.001,
+      };
+
+  const liveRegionId = `${id}-live`;
+
   return (
     <div
       ref={containerRef}
-      tabIndex={0}
+      role="group"
+      aria-roledescription="carousel"
+      aria-label={`${
+        type === 'reading' ? 'Currently reading' : 'Completed'
+      } books`}
+      onKeyDown={handleKeyDown}
       style={{
         position: 'relative',
         width: '100%',
-        outline: 'none',
       }}
+      className="bookshelf-carousel"
     >
-      {/* Arrow buttons – visible on hover / pointer devices */}
+      {/* Screen-reader live region */}
+      <div
+        id={liveRegionId}
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {`Book ${activeIndex + 1} of ${count}: ${books[activeIndex]?.title}`}
+      </div>
+
+      {/* Arrow buttons — hidden for mouse, visible on keyboard focus */}
       <button
         onClick={goPrev}
         aria-label="Previous book"
+        className="bookshelf-nav-btn bookshelf-nav-btn--prev"
         style={{
           position: 'absolute',
           left: '8px',
@@ -140,17 +174,30 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
           cursor: 'pointer',
           color: '#fff',
           fontSize: '18px',
-          opacity: 0.7,
-          transition: 'opacity 0.2s',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.7')}
       >
-        ‹
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
       <button
         onClick={goNext}
         aria-label="Next book"
+        className="bookshelf-nav-btn bookshelf-nav-btn--next"
         style={{
           position: 'absolute',
           right: '8px',
@@ -169,13 +216,25 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
           cursor: 'pointer',
           color: '#fff',
           fontSize: '18px',
-          opacity: 0.7,
-          transition: 'opacity 0.2s',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.7')}
       >
-        ›
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
 
       {/* Carousel track – draggable */}
@@ -188,7 +247,6 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
         }}
         onDragEnd={(e, info) => {
           handleDragEnd(e, info);
-          // Reset drag flag after a tick so click handlers can check it
           requestAnimationFrame(() => {
             dragRef.current = false;
           });
@@ -204,6 +262,8 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
           userSelect: 'none',
         }}
         whileTap={{ cursor: 'grabbing' }}
+        role="list"
+        aria-label="Books"
       >
         {books.map((book, i) => {
           const offset = getOffset(i);
@@ -211,31 +271,39 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
           const isActive = offset === 0;
           const isVisible = absOffset <= VISIBLE_RANGE;
 
-          // iOS-style positioning: center item is full size,
-          // neighbours fan out with decreasing scale & opacity
           const xPos = offset * 80;
-          const scale = isActive ? 1 : Math.max(1 - absOffset * 0.12, 0.55);
+          const scale = prefersReducedMotion
+            ? isActive
+              ? 1
+              : 0.85
+            : isActive
+            ? 1
+            : Math.max(1 - absOffset * 0.12, 0.55);
           const opacity = isVisible
             ? isActive
               ? 1
               : Math.max(1 - absOffset * 0.25, 0.15)
             : 0;
           const zIndex = 10 - absOffset;
-          // Subtle 3D rotation for depth
-          const rotateY = offset * -5;
+          const rotateY = prefersReducedMotion ? 0 : offset * -5;
 
           return (
             <motion.div
               key={book.slug}
+              role="listitem"
+              aria-label={book.title}
+              aria-current={isActive ? 'true' : undefined}
               layout={false}
               style={{
                 position: 'absolute',
                 width: `${BOOK_W}px`,
                 height: `${BOOK_H}px`,
                 borderRadius: '8px',
-                overflow: 'hidden',
+                overflow: 'visible',
                 pointerEvents: isActive ? 'auto' : 'none',
-                willChange: 'transform, opacity',
+                willChange: prefersReducedMotion
+                  ? 'auto'
+                  : 'transform, opacity',
               }}
               animate={{
                 x: xPos,
@@ -244,34 +312,32 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
                 zIndex,
                 rotateY,
               }}
-              transition={{
-                type: 'spring',
-                stiffness: 280,
-                damping: 28,
-                mass: 0.9,
-                // Slightly stagger non-active for depth feel
-                restDelta: 0.001,
-              }}
+              transition={springTransition}
             >
               <Link
                 href={`/posts/${type}/${book.slug}`}
                 onClick={(e) => {
-                  // Prevent navigation if user was dragging
                   if (dragRef.current) e.preventDefault();
                 }}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
+                tabIndex={isActive ? 0 : -1}
+                aria-label={`${book.title}${
+                  isActive ? '' : ' (use arrow keys to navigate)'
+                }`}
+                className="bookshelf-book-link"
                 style={{
                   display: 'block',
                   width: '100%',
                   height: '100%',
                   borderRadius: '8px',
                   overflow: 'hidden',
+                  outline: 'none',
                 }}
               >
                 <Image
                   src={book.cover}
-                  alt={book.title}
+                  alt=""
                   fill
                   style={{
                     objectFit: 'cover',
@@ -291,8 +357,10 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
         })}
       </motion.div>
 
-      {/* Dots indicator */}
+      {/* Dots indicator — proper buttons */}
       <div
+        role="tablist"
+        aria-label="Book navigation"
         style={{
           display: 'flex',
           gap: '6px',
@@ -300,15 +368,21 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
           paddingTop: '4px',
         }}
       >
-        {books.map((_, i) => (
-          <div
+        {books.map((book, i) => (
+          <button
             key={i}
+            role="tab"
+            aria-selected={i === activeIndex}
+            aria-label={`Go to book ${i + 1}: ${book.title}`}
             onClick={() => setActiveIndex(i)}
+            className="bookshelf-dot"
             style={{
               width: i === activeIndex ? '18px' : '6px',
               height: '6px',
               borderRadius: '3px',
               cursor: 'pointer',
+              border: 'none',
+              padding: 0,
               background:
                 i === activeIndex
                   ? 'var(--accent, #3b82f6)'
@@ -323,24 +397,71 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books, type }) => {
       <AnimatePresence exitBeforeEnter>
         <motion.div
           key={activeIndex}
-          initial={{ opacity: 0, y: 8 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{
-            duration: 0.22,
-            ease: [0.4, 0, 0.2, 1],
-          }}
+          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0.05 }
+              : { duration: 0.22, ease: [0.4, 0, 0.2, 1] }
+          }
           style={{
             minHeight: '100px',
             textAlign: 'center',
             paddingTop: '12px',
           }}
+          aria-hidden="true"
         >
           <Text size="2" weight="4" css={{ color: 'var(--text-primary)' }}>
             {books[activeIndex]?.title}
           </Text>
         </motion.div>
       </AnimatePresence>
+
+      {/* Scoped styles for a11y */}
+      <style jsx global>{`
+        /* Nav buttons: hidden by default, visible on keyboard focus */
+        .bookshelf-nav-btn {
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        .bookshelf-nav-btn:focus-visible {
+          opacity: 1;
+          outline: 2px solid var(--accent, #3b82f6);
+          outline-offset: 2px;
+        }
+        .bookshelf-nav-btn:focus:not(:focus-visible) {
+          outline: none;
+          opacity: 0;
+        }
+
+        /* Book link focus indicator */
+        .bookshelf-book-link:focus-visible {
+          box-shadow: 0 0 0 3px var(--accent, #3b82f6);
+          border-radius: 8px;
+        }
+        .bookshelf-book-link:focus:not(:focus-visible) {
+          box-shadow: none;
+        }
+
+        /* Dot focus indicator */
+        .bookshelf-dot:focus-visible {
+          outline: 2px solid var(--accent, #3b82f6);
+          outline-offset: 2px;
+        }
+        .bookshelf-dot:focus:not(:focus-visible) {
+          outline: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .bookshelf-carousel *,
+          .bookshelf-carousel *::before,
+          .bookshelf-carousel *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -354,9 +475,13 @@ interface BookShelfProps {
 }
 
 const BookShelf: React.FC<BookShelfProps> = ({ title, books, type }) => {
+  const carouselId = `bookshelf-${type}`;
+
   return (
     <Flex direction="column" gap="4" alignItems="flex-start">
       <Text
+        as="h3"
+        id={carouselId}
         size="1"
         weight="4"
         css={{
@@ -368,7 +493,7 @@ const BookShelf: React.FC<BookShelfProps> = ({ title, books, type }) => {
       >
         {title}
       </Text>
-      <BookCarousel books={books} type={type} />
+      <BookCarousel books={books} type={type} id={carouselId} />
     </Flex>
   );
 };

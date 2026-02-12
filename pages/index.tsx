@@ -86,7 +86,6 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
                   variant="secondary"
                   endIcon={<Icon.External size="4" />}
                   style={{ textDecoration: 'none' }}
-                  tabIndex={-1}
                 >
                   My resume
                 </Button>
@@ -95,7 +94,6 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
               <a
                 href="https://twitter.com/rashidtvmr"
                 style={{ textDecoration: 'none' }}
-                tabIndex={-1}
               >
                 <Button variant="secondary" endIcon={<Icon.Twitter size="4" />}>
                   @rashidtvmr
@@ -116,6 +114,7 @@ const IndexPage = ({ completedBooks, readingBooks }: Props) => {
       <Grid gapX={4} gapY={2} templateColumns={templateColumnsMedium}>
         <Grid.Item col={2} css={{ marginTop: '20px' }}>
           <Text
+            as="h2"
             size="2"
             css={{
               textTransform: 'uppercase',
