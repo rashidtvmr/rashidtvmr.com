@@ -24,7 +24,7 @@ const RGBShiftVisualizer = (props: { enableSampling?: boolean }) => {
     : 'RGB Shift/Chromatic Aberration effect visualizer';
 
   return (
-    <Card className="maximeheckel-dark" title={title}>
+    <Card className="rashidtvmr-dark" title={title}>
       <Card.Body as={Flex} direction="column" dotMatrix gap="6">
         <Box
           css={{

@@ -73,3 +73,10 @@ cypress/videos
 
 # Static export output
 out/
+
+# Optimized images (generated at build time)
+public/static/images/optimized/
+
+# Generated llm.txt files (built at prebuild)
+public/llm.txt
+public/posts/**/llm.txt

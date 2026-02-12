@@ -14,6 +14,7 @@ export type Post = {
   slug: string;
   subtitle: string;
   title: string;
+  llm?: string;
 };
 
 export type Book = {
@@ -23,6 +24,7 @@ export type Book = {
   date: string;
   subtitle?: string;
   keywords?: string[];
+  llm?: string;
 };
 
 export type FrontMatterPost = {

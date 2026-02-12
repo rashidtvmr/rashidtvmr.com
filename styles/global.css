@@ -15,6 +15,7 @@ body {
   word-wrap: break-word;
   text-rendering: optimizeLegibility;
   margin: 0;
+  font-family: var(--font-display), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* [hidden],
@@ -22,6 +23,7 @@ body {
 .hidden-layout {
   display: none;
 }
+
 /* 
 [aria-hidden='false'] {
   display: block;
@@ -40,3 +42,23 @@ img {
 }
 
 /* END Patch gif wrapped in figure tag */
+
+/* Hide scrollbar for mobile iOS picker */
+[style*="scrollSnapType"] ::-webkit-scrollbar,
+.mobile-picker-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure consistent font across all elements */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+}

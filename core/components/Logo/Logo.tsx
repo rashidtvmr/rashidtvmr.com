@@ -16,7 +16,7 @@ const Logo = ({ alt }: LogoProps) => (
     className={transitionLogo()}
     aria-label={alt}
   >
-    <g clip-path="url(#clip0_1_2)">
+    <g clipPath="url(#clip0_1_2)">
       <rect width="400" height="400" rx="100" fill="#D7D7D7" />
       <path
         d="M299.345 52H50L124 121H265L247 199H313L338.07 102.017C344.616 76.695 325.5 52 299.345 52Z"

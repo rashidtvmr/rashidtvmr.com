@@ -14,7 +14,9 @@ const ogImageDir = `./public/static/og`;
 
   console.info(chalk.cyan('info'), ` - Generating Opengraph images`);
 
-  const files = fs.readdirSync(path.join(root, 'content'));
+  const files = fs
+    .readdirSync(path.join(root, 'content'))
+    .filter((file) => file.endsWith('.mdx'));
 
   const posts = files.reduce((allPosts, postSlug) => {
     const source = fs.readFileSync(
@@ -51,7 +53,7 @@ const ogImageDir = `./public/static/og`;
       };
     }, {});
 
-    const url = `http://localhost:3000/og?${qs.stringify(filteredParams)}`;
+    const url = `http://localhost:8080/og?${qs.stringify(filteredParams)}`;
 
     try {
       fs.statSync(imagePath);

@@ -134,7 +134,7 @@ class MyDocument extends Document {
               __html: `(function() { try {
         var mode = localStorage.getItem('mode');
         var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-        if (!mode && supportDarkMode)  document.documentElement.classList.add('maximeheckel-dark');
+        if (!mode && supportDarkMode)  document.documentElement.classList.add('rashidtvmr-dark');
         if (!mode) return
         document.documentElement.classList.add('maximeheckel-' + mode);
       } catch (e) {} })();`,
