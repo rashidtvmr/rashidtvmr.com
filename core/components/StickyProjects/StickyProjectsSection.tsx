@@ -475,7 +475,7 @@ const StickyProjectsSection = () => {
                   />
 
                   {/* Indicator bar */}
-                  <motion.div
+                  {/* <motion.div
                     aria-hidden="true"
                     style={{
                       width: '3px',
@@ -497,7 +497,7 @@ const StickyProjectsSection = () => {
                             damping: 30,
                           }
                     }
-                  />
+                  /> */}
 
                   {/* Title + Category stacked */}
                   <div
